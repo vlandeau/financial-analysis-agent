@@ -16,10 +16,8 @@
 # %%
 import pandas as pd
 from pathlib import Path
-import plotly.express as px
 
 # %%
-# %matplotlib inline
 current_path = Path.cwd()
 data_path = current_path / ".." / "data"
 
@@ -27,7 +25,7 @@ data_path = current_path / ".." / "data"
 # # Data loading
 
 # %%
-pnl_df = pd.read_excel(data_path / "P&L.xlsx", skiprows=[1])
+pnl_df = pd.read_exgcel(data_path / "P&L.xlsx", skiprows=[1])
 
 # %%
 pnl_df
