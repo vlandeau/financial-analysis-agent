@@ -1,0 +1,24 @@
+[project]
+name = "financial-analysis-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.27",
+    "langchain-openai>=0.3.31",
+    "langchain-unstructured>=0.1.6",
+    "pandas>=2.3.2",
+    "pypdf>=6.0.0",
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "jupytext>=1.17.2",
+    "matplotlib>=3.10.5",
+    "openpyxl>=3.1.5",
+    "plotly>=6.3.0",
+]
