@@ -12,6 +12,10 @@ We are using `python-dotenv` to manage our environment variables.
 
 In order to setup your environment variables, you should copy the `.env.template` file to a new file named `.env` and fill in your API keys.
 
+### Input data
+
+Please copy the `P&L.xlsx` and `Financial Planning & Analysis and Performance Management ( PDFDrive ).pdf` file to `data/`, and rename `Financial Planning & Analysis and Performance Management ( PDFDrive ).pdf`to `financial_planning.pdf`.
+
 ## Exploration
 
 ### Running Jupyter Notebooks
