@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "click>=8.2.1",
     "langchain>=0.3.27",
     "langchain-community>=0.3.27",
     "langchain-openai>=0.3.31",
@@ -27,7 +28,11 @@ dev = [
     "plotly>=6.3.0",
     "pymupdf>=1.26.3",
     "pypdf>=6.0.0",
+    "ruff>=0.12.10",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = [{ include = "forecasting", from = "src" }]
+
+[project.scripts]
+analysis = "main:main"

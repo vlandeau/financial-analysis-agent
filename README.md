@@ -5,6 +5,11 @@
 ### Package Installation
 
 We are using `uv` to manage our virtual environments and package dependencies. Please refer to the [official documentation](https://docs.astral.sh/uv/) for more information on how to install and use `uv`.
+Please run the folloing command to install the project : 
+
+```bash
+uv run pip install -e .
+```
 
 ### Environment Variables
 
@@ -16,7 +21,10 @@ In order to setup your environment variables, you should copy the `.env.template
 
 Please copy the `P&L.xlsx` and `Financial Planning & Analysis and Performance Management ( PDFDrive ).pdf` file to `data/`, and rename `Financial Planning & Analysis and Performance Management ( PDFDrive ).pdf`to `financial_planning.pdf`.
 
-## Exploration
+## Exploration and data processing
+
+Notebooks have been used both to explore the data, possible information extraction from the pdf and forecasting models, 
+but also to process data from the excel file and store it to parquet files to be used by the agent. 
 
 ### Running Jupyter Notebooks
 
@@ -41,3 +49,17 @@ This means the first time you retrieve the repository, you won't see any `.ipynb
 ```bash
 uv run jupytext --to ipynb notebooks/*.py
 ```
+
+## Running the Agent
+You can run the agent using the following command:
+
+```bash
+uv run analysis --user-query "<your query here>"
+```
+
+The agent has two tools at its disposal:
+* read_data_by_topic: a tool to retrieve the relevant data, based on the parquet files generated from the excel file.
+* forecast_future_financial_data: a tool to forecast future financial data based on historical data.
+
+The forecasting tool generate a confidence interval for the forecasted values, which is then used by the agent to provide a more informative response, with optimistic and pessimistic scenarios.
+The LLM can configure the confidence level to use, based on the user query.

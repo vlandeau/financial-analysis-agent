@@ -1,4 +1,7 @@
-from forecasting.forecasting_tool import forecast_future_financial_data, TimeSeriesDataPoint
+from forecasting.forecasting_tool import (
+    forecast_future_financial_data,
+    TimeSeriesDataPoint,
+)
 
 
 def test_forecast_future_financial_data_with_seasonality_and_no_trend():
@@ -16,10 +19,12 @@ def test_forecast_future_financial_data_with_seasonality_and_no_trend():
     num_quarters_to_forecast = 4
 
     # When
-    forecast = forecast_future_financial_data.invoke({
-        "historical_data": historical_data,
-        "num_quarters_to_forecast": num_quarters_to_forecast
-    })
+    forecast = forecast_future_financial_data.invoke(
+        {
+            "historical_data": historical_data,
+            "num_quarters_to_forecast": num_quarters_to_forecast,
+        }
+    )
 
     # Then
     assert len(forecast) == num_quarters_to_forecast
@@ -30,6 +35,8 @@ def test_forecast_future_financial_data_with_seasonality_and_no_trend():
 
     expected_values = [100.0, 110.0, 120.0, 130.0]
     for i in range(num_quarters_to_forecast):
-        assert abs(forecast[i].financial_data_likeliest_value - expected_values[i]) < 1e-5
+        assert (
+            abs(forecast[i].financial_data_likeliest_value - expected_values[i]) < 1e-5
+        )
         assert abs(forecast[i].financial_data_lower_bound - expected_values[i]) < 1e-5
         assert abs(forecast[i].financial_data_upper_bound - expected_values[i]) < 1e-5

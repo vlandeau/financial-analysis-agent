@@ -13,16 +13,19 @@
 #     name: python3
 # ---
 
+from pathlib import Path
+
+import numpy as np
 # %%
 import pandas as pd
-import numpy as np
-from pathlib import Path
 import plotly.express as px
-from sklearn.linear_model import LinearRegression
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
-from sklearn.model_selection import TimeSeriesSplit
 import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.model_selection import TimeSeriesSplit
+from statsmodels.tsa.exponential_smoothing.ets import ETSModel
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
 
 current_path = Path.cwd()
 output_data_path = current_path / ".." / "data" / "output"
@@ -90,9 +93,10 @@ for _, (train_index, test_index) in enumerate(tscv.split(X)):
 
     predictions.append(prediction_revenue)
     actuals.append(actual_revenue)
-    fold_indices.append(test_index[0]) # Store the index of the test point
-    
-    print(f"Fold {i+1}: Trained on {len(X_train)} quarters, Forecasted {prediction_revenue:.2f}, Actual was {actual_revenue:.2f}")
+    fold_indices.append(test_index[0])  # Store the index of the test point
+
+    print(
+        f"Fold {i + 1}: Trained on {len(X_train)} quarters, Forecasted {prediction_revenue:.2f}, Actual was {actual_revenue:.2f}")
 
 # %%
 mape = mean_absolute_percentage_error(actuals, predictions)
@@ -145,7 +149,7 @@ for _, (train_index, test_index) in enumerate(tscv.split(X)):
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
     model.fit(X_train, y_train)
-    
+
     log_forecast = model.predict(X_test)
 
     prediction_revenue = np.exp(log_forecast[0])
@@ -153,9 +157,10 @@ for _, (train_index, test_index) in enumerate(tscv.split(X)):
 
     predictions.append(prediction_revenue)
     actuals.append(actual_revenue)
-    fold_indices.append(test_index[0]) # Store the index of the test point
-    
-    print(f"Fold {i+1}: Trained on {len(X_train)} quarters, Forecasted {prediction_revenue:.2f}, Actual was {actual_revenue:.2f}")
+    fold_indices.append(test_index[0])  # Store the index of the test point
+
+    print(
+        f"Fold {i + 1}: Trained on {len(X_train)} quarters, Forecasted {prediction_revenue:.2f}, Actual was {actual_revenue:.2f}")
 
 # %%
 mape = mean_absolute_percentage_error(actuals, predictions)
@@ -191,15 +196,20 @@ model.intercept_
 # %%
 y = df_with_features["Total Revenue"]
 
-ets = ExponentialSmoothing(
+ets = ETSModel(
     y,
     trend="add",
     seasonal="mul",
     seasonal_periods=4,
-).fit(optimized=True)
+).fit()
 
+ets.summary()
+
+# %%
 ets_forecast = ets.forecast(4)
 ets_forecast
+
+# %%
 
 # %%
 ets = ExponentialSmoothing(
@@ -209,6 +219,9 @@ ets = ExponentialSmoothing(
     seasonal_periods=4,
 ).fit(optimized=True)
 
+ets.summary()
+
+# %%
 ets_forecast = ets.forecast(4)
 
 # %%
@@ -264,7 +277,8 @@ interval_ols = np.exp(interval_ols_log)
 interval_ols
 
 # %%
-df_with_prediction_range = pd.concat([df_with_features, interval_ols, df_with_ets_predictions[["ets_forecast"]]], axis=1)
+df_with_prediction_range = pd.concat([df_with_features, interval_ols, df_with_ets_predictions[["ets_forecast"]]],
+                                     axis=1)
 
 # %%
 px.line(df_with_prediction_range[["Total Revenue", "mean", "obs_ci_lower", "obs_ci_upper", "ets_forecast"]])

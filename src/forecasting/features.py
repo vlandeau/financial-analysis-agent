@@ -8,5 +8,5 @@ FEATURE_LIST = [
     SECOND_QUARTER_COL_NAME,
     THIRD_QUARTER_COL_NAME,
     FOURTH_QUARTER_COL_NAME,
-    "const", # for statsmodels OLS intercept
+    "const",  # for statsmodels OLS intercept
 ]

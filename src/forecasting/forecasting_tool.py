@@ -11,16 +11,18 @@ from forecasting.features import FEATURE_LIST
 
 class TimeSeriesDataPoint(BaseModel):
     """Represents a single data point in the historical time series for a given financial metric."""
+
     date: str = Field(
         ..., description="The date of the data point in 'YYYY-MM-DD' format."
     )
     financial_data_value: float = Field(
         ..., description="The financial data value for that period."
     )
-    
+
 
 class TrainAndForecastInput(BaseModel):
     """Input schema for the dynamic training and forecasting tool."""
+
     historical_data: List[TimeSeriesDataPoint] = Field(
         ...,
         description="A list of historical data points, each with a date and revenue.",
@@ -40,6 +42,7 @@ class TrainAndForecastInput(BaseModel):
 
 class PredictionIntervalDataPoint(BaseModel):
     """Represents a single forecasted data point with prediction intervals."""
+
     date: str = Field(
         ..., description="The date of the forecasted data point in 'YYYY-MM-DD' format."
     )
@@ -56,9 +59,9 @@ class PredictionIntervalDataPoint(BaseModel):
 
 @tool(args_schema=TrainAndForecastInput)
 def forecast_future_financial_data(
-        historical_data: List[TimeSeriesDataPoint],
-        num_quarters_to_forecast: int,
-        confidence_interval: float = 0.95
+    historical_data: List[TimeSeriesDataPoint],
+    num_quarters_to_forecast: int,
+    confidence_interval: float = 0.95,
 ) -> List[PredictionIntervalDataPoint]:
     """
     Trains a simple forecasting model on historical financial data and predicts future values.
@@ -73,10 +76,10 @@ def forecast_future_financial_data(
     """
     df = _create_dataframe_indexed_by_quarter(historical_data)
     df_with_quarter_features = create_quarter_features(df)
-    df_with_constant = sm.add_constant(df_with_quarter_features, has_constant='add')
+    df_with_constant = sm.add_constant(df_with_quarter_features, has_constant="add")
 
     target_col = "target"
-    data_value_col = 'financial_data_value'
+    data_value_col = "financial_data_value"
     is_financial_data_positive = (df[data_value_col] > 0).all()
     if is_financial_data_positive:
         df_with_constant[target_col] = np.log(df_with_constant[data_value_col])
@@ -88,11 +91,15 @@ def forecast_future_financial_data(
     future_dates = pd.date_range(
         start=df_with_quarter_features.index[-1] + pd.offsets.QuarterEnd(),
         periods=num_quarters_to_forecast,
-        freq='Q'
+        freq="QE",
     )
     future_df = pd.DataFrame(index=future_dates)
-    future_df_with_quarter_features = create_quarter_features(future_df, len(historical_data))
-    future_df_with_constant = sm.add_constant(future_df_with_quarter_features, has_constant='add')
+    future_df_with_quarter_features = create_quarter_features(
+        future_df, len(historical_data)
+    )
+    future_df_with_constant = sm.add_constant(
+        future_df_with_quarter_features, has_constant="add"
+    )
     future_predictions = model.get_prediction(future_df_with_constant[FEATURE_LIST])
     prediction_summary = future_predictions.summary_frame(alpha=1 - confidence_interval)
     if is_financial_data_positive:
@@ -100,10 +107,10 @@ def forecast_future_financial_data(
 
     return [
         PredictionIntervalDataPoint(
-            date=date.strftime('%Y-%m-%d'),
-            financial_data_likeliest_value=row['mean'],
-            financial_data_lower_bound=row['obs_ci_lower'],
-            financial_data_upper_bound=row['obs_ci_upper']
+            date=date.strftime("%Y-%m-%d"),
+            financial_data_likeliest_value=row["mean"],
+            financial_data_lower_bound=row["obs_ci_lower"],
+            financial_data_upper_bound=row["obs_ci_upper"],
         )
         for date, row in prediction_summary.iterrows()
     ]
@@ -111,6 +118,6 @@ def forecast_future_financial_data(
 
 def _create_dataframe_indexed_by_quarter(historical_data):
     df = pd.DataFrame([data_point.model_dump() for data_point in historical_data])
-    df['date'] = pd.to_datetime(df['date'])
-    df.set_index('date', inplace=True)
+    df["date"] = pd.to_datetime(df["date"])
+    df.set_index("date", inplace=True)
     return df
