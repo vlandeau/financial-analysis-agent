@@ -8,6 +8,7 @@ dependencies = [
     "langchain>=0.3.27",
     "langchain-community>=0.3.27",
     "langchain-openai>=0.3.31",
+    "langgraph>=0.6.6",
     "pandas>=2.3.2",
     "pyarrow>=21.0.0",
     "python-dotenv>=1.1.1",
