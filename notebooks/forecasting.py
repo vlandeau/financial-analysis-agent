@@ -35,6 +35,9 @@ output_data_path = current_path / ".." / "data" / "output"
 revenue_per_quarter_df = pd.read_parquet(output_data_path / "revenue.parquet")
 
 # %%
+revenue_per_quarter_df
+
+# %%
 px.line(revenue_per_quarter_df)
 
 # %%
@@ -238,6 +241,9 @@ y_train_full = df_with_features["log_total_revenue"]
 model_ols = sm.OLS(y_train_full, X_train_full).fit()
 
 # %%
+model_ols.summary()
+
+# %%
 future_dates = pd.date_range(start='2024-03-31', periods=4, freq='Q')
 X_future = pd.DataFrame(index=future_dates)
 X_future['time_trend'] = np.arange(len(df_with_features), len(df_with_features) + 4)
@@ -246,9 +252,6 @@ future_seasonal_dummies = pd.get_dummies(X_future['quarter'], prefix='Q', drop_f
 X_future = pd.concat([X_future, future_seasonal_dummies], axis=1)
 X_future = sm.add_constant(X_future, has_constant='add')
 X_future = X_future.astype(float)
-for col in X_train_full.columns:
-    if col not in X_future.columns:
-        X_future[col] = 0
 
 # %%
 X_future
