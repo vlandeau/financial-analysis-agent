@@ -250,3 +250,11 @@ for doc in docs:
 
 
 # %%
+docs = vector_store.similarity_search("Show me the last 8 quarters of OPEX costs, then forecast the next 4 quarters, taking into account that the cost there are reasons to think the cost could significantly increase.", k=2)
+for doc in docs:
+    print("-----------")
+    print(doc.page_content)
+    print("-----------")
+
+
+# %%
