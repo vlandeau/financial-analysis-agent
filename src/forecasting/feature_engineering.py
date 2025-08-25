@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from forecasting.features import TIME_TREND_COL_NAME
+from forecasting.features import TIME_TREND_COL_NAME, QUARTER_COL_NAMES
 
 
 def create_quarter_features(
@@ -26,4 +26,10 @@ def create_quarter_features(
         df_with_features["quarter"], prefix="Q", drop_first=True
     )
     df_with_features = pd.concat([df_with_features, seasonal_dummies], axis=1)
+    df_with_features.drop(columns=["quarter"], inplace=True)
+
+    for quarter_col in QUARTER_COL_NAMES:
+        if quarter_col not in df_with_features.columns:
+            df_with_features[quarter_col] = 0
+
     return df_with_features.astype(float)

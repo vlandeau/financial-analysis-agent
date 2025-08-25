@@ -62,3 +62,28 @@ def test_create_quarter_features_with_starting_value_for_time_trend():
     assert all(df_with_features["time_trend"] == expected_time_trend), (
         "Time trend values do not match expected values"
     )
+
+
+def test_create_quarter_features_without_all_quarters():
+    # Given
+    df = pd.DataFrame(
+        {
+            "date": pd.date_range(start="2020-01-01", periods=2, freq="Q"),
+            "financial_data_value": [100, 110],
+        }
+    )
+
+    df.set_index("date", inplace=True)
+
+    starting_value_for_time_trend = 10
+
+    # When
+    df_with_features = create_quarter_features(df, starting_value_for_time_trend)
+
+    # Then
+    assert "Q_2" in df_with_features.columns, "Missing column: Q_2"
+    assert "Q_3" in df_with_features.columns, "Missing column: Q_2"
+    assert "Q_4" in df_with_features.columns, "Missing column: Q_2"
+    assert all(df_with_features["Q_2"] == [0, 1]), "Q_2 values do not match expected values"
+    assert all(df_with_features["Q_3"] == [0, 0]), "Q_3 values do not match expected values"
+    assert all(df_with_features["Q_4"] == [0, 0]), "Q_4 values do not match expected values"

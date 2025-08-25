@@ -80,7 +80,7 @@ fold_indices = []
 
 model = LinearRegression()
 
-for _, (train_index, test_index) in enumerate(tscv.split(X)):
+for i, (train_index, test_index) in enumerate(tscv.split(X)):
     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
     y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
@@ -262,5 +262,7 @@ df_with_prediction_range = pd.concat([df_with_features, interval_ols, df_with_et
 
 # %%
 px.line(df_with_prediction_range[["Total Revenue", "mean", "obs_ci_lower", "obs_ci_upper", "ets_forecast"]])
+
+# %%
 
 # %%
